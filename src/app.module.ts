@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { UserModule } from './user/user.module';
 require('dotenv-flow').config();
 
 @Module({
@@ -16,6 +17,7 @@ require('dotenv-flow').config();
         expiresIn: 60 * 6,
       },
     }),
+    UserModule,
   ],
   controllers: [],
   providers: [],
