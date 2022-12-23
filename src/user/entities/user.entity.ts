@@ -5,7 +5,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -24,8 +27,9 @@ export class UserEntity {
   @Column({ length: 11 })
   phone: string;
 
-  @Column()
-  address: string;
+  @OneToOne((type) => AddressEntity, { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn()
+  address: AddressEntity;
 
   @Column()
   active: boolean;
