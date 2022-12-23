@@ -10,29 +10,41 @@ import {
 @Entity({ name: 'user' })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: number;
 
-  @Column()
+  @Column({ length: 50, nullable: false })
   name: string;
 
-  @Column()
+  @Column({ unique: true, length: 50, nullable: false })
+  email: string;
+
+  @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
   url: string;
 
-  @Column()
+  @Column({ length: 11 })
   phone: string;
 
   @Column()
+  address: string;
+
+  @Column()
+  active: boolean;
+
+  @Column()
+  salt: string;
+
+  @Column({ nullable: false })
   password: string;
 
   @Column()
-  passwords: string;
+  password2: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'create_date' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'update_date' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn({ name: 'delete_date' })
   deletedAt: Date;
 }
