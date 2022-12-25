@@ -9,6 +9,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
+import { Match } from '../validators/match.validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -47,6 +48,6 @@ export class CreateUserDto {
   })
   password: string;
 
-  @IsNotEmpty()
+  @Match('password', { message: 'Password don not match' })
   password2: string;
 }
