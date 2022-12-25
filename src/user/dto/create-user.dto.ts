@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -8,8 +9,13 @@ import {
   MaxLength,
   MinLength,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
+<<<<<<< HEAD
 import { Match } from '../validators/match.validator';
+=======
+import { CreateAddressDTO } from './create.address.dto';
+>>>>>>> feature/AdressEntity
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -36,7 +42,9 @@ export class CreateUserDto {
   @MaxLength(11)
   phone: string;
 
-  address: string;
+  @ValidateNested()
+  @Type(() => CreateAddressDTO)
+  address: CreateAddressDTO;
 
   @IsNotEmpty()
   @IsStrongPassword({
