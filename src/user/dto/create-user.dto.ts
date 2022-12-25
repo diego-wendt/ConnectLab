@@ -11,11 +11,8 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-<<<<<<< HEAD
 import { Match } from '../validators/match.validator';
-=======
 import { CreateAddressDTO } from './create.address.dto';
->>>>>>> feature/AdressEntity
 
 export class CreateUserDto {
   @IsNotEmpty()
