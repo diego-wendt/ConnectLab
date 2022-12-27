@@ -11,6 +11,7 @@ import {
 import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn';
 import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
 import { AddressEntity } from './address.entity';
+import * as bcrypt from 'bcrypt';
 // import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'user' })
@@ -53,4 +54,10 @@ export class UserEntity {
 
   @DeleteDateColumn({ name: 'delete_date' })
   deletedAt: Date;
+
+  checkPassword(password) {
+    if (this.password === bcrypt.hashSync(password, this.salt)) {
+      return true;
+    }
+  }
 }

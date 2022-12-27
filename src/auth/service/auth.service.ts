@@ -6,6 +6,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm/repository/Repository';
 import { Inject } from '@nestjs/common/decorators';
+import { CredentialsDto } from '../dto/credentials.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,9 +21,6 @@ export class AuthService {
     return new Promise(async (resolve, reject) => {
       const { name, url, email, phone, password } = createUser;
       try {
-        // const address = this.createAddress(createUser.address);
-        // this.addressRepository.save(address);
-
         const user = this.userRepository.create();
         user.name = name;
         user.email = email;
@@ -45,6 +43,22 @@ export class AuthService {
     });
   }
 
+  async signin(credentials: CredentialsDto) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await this.userRepository.findOneBy({
+          email: credentials.email,
+        });
+        if (!user.email || !user.checkPassword(credentials.password)) {
+          reject('1 - usuário ou senha inválidos');
+        }
+        resolve('login efetuado com sucesso');
+      } catch (error) {
+        reject('error');
+      }
+    });
+  }
+
   createAddress(addressDto: CreateAddressDTO): AddressEntity {
     const { city, complement, neighborhood, number, state, street, zipCode } =
       addressDto;
@@ -59,23 +73,3 @@ export class AuthService {
     return address;
   }
 }
-
-// const address = this.addressRepository.create();
-// const {
-//   city,
-//   complement,
-//   neighborhood,
-//   number,
-//   state,
-//   street,
-//   zipCode,
-// } = createUser.address;
-// address.city = city;
-// address.complement = complement;
-// address.neighborhood = neighborhood;
-// address.number = number;
-// address.state = state;
-// address.street = street;
-// address.zipCode = zipCode;
-// const newAddress = this.addressRepository.save(address);
-// resolve(newAddress);
