@@ -5,31 +5,33 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
+  // OneToOne,
+  // JoinColumn,
 } from 'typeorm';
-import { AddressEntity } from './address.entity';
+// import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true, length: 50, nullable: false })
+  @Column({ unique: true })
   email: string;
 
-  @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
+  @Column()
   url: string;
 
-  @Column({ length: 11 })
+  @Column()
   phone: string;
 
-  @OneToOne((type) => AddressEntity, { cascade: true, onDelete: 'CASCADE' })
-  @JoinColumn()
-  address: AddressEntity;
+  // // @OneToOne((type) => AddressEntity, (address) => address.user, {
+  // //   cascade: true,
+  // // })
+  // // @JoinColumn()
+  // // address: AddressEntity;
 
   @Column()
   active: boolean;
@@ -37,11 +39,8 @@ export class UserEntity {
   @Column()
   salt: string;
 
-  @Column({ nullable: false })
+  @Column()
   password: string;
-
-  @Column({ nullable: false })
-  password2: string;
 
   @CreateDateColumn({ name: 'create_date' })
   createdAt: Date;

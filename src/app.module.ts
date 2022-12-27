@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 require('dotenv-flow').config();
 
 @Module({
@@ -18,6 +19,7 @@ require('dotenv-flow').config();
       },
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

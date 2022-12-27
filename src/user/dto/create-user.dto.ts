@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -9,10 +8,8 @@ import {
   MaxLength,
   MinLength,
   ValidateIf,
-  ValidateNested,
 } from 'class-validator';
 import { Match } from '../validators/match.validator';
-import { CreateAddressDTO } from './create.address.dto';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -27,9 +24,7 @@ export class CreateUserDto {
   @MaxLength(50)
   email: string;
 
-  //   @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
   @ValidateIf((dto) => dto.url !== '')
-  @MinLength(3)
   @IsUrl()
   url: string;
 
@@ -39,9 +34,9 @@ export class CreateUserDto {
   @MaxLength(11)
   phone: string;
 
-  @ValidateNested()
-  @Type(() => CreateAddressDTO)
-  address: CreateAddressDTO;
+  // @ValidateNested()
+  // @Type(() => CreateAddressDTO)
+  // address: CreateAddressDTO;
 
   @IsNotEmpty()
   @IsStrongPassword({
@@ -53,6 +48,6 @@ export class CreateUserDto {
   })
   password: string;
 
-  @Match('password', { message: 'Password don not match' })
+  @Match('password', { message: 'Password do not match' })
   password2: string;
 }
