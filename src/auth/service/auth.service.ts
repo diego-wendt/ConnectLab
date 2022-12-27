@@ -33,7 +33,7 @@ export class AuthService {
         user.active = true;
         user.salt = bcrypt.genSaltSync(10);
         user.password = bcrypt.hashSync(password, user.salt);
-        // user.address = this.createAddress(createUser.address);
+        user.address = this.createAddress(createUser.address);
         console.log(user);
         const newUser = await this.userRepository.save(user);
         console.log(newUser);
@@ -45,19 +45,19 @@ export class AuthService {
     });
   }
 
-  // createAddress(addressDto: CreateAddressDTO): AddressEntity {
-  //   const { city, complement, neighborhood, number, state, street, zipCode } =
-  //     addressDto;
-  //   const address = this.addressRepository.create();
-  //   address.city = city;
-  //   address.complement = complement;
-  //   address.neighborhood = neighborhood;
-  //   address.number = number;
-  //   address.state = state;
-  //   address.street = street;
-  //   address.zipCode = zipCode;
-  //   return address;
-  // }
+  createAddress(addressDto: CreateAddressDTO): AddressEntity {
+    const { city, complement, neighborhood, number, state, street, zipCode } =
+      addressDto;
+    const address = this.addressRepository.create();
+    address.city = city;
+    address.complement = complement;
+    address.neighborhood = neighborhood;
+    address.number = number;
+    address.state = state;
+    address.street = street;
+    address.zipCode = zipCode;
+    return address;
+  }
 }
 
 // const address = this.addressRepository.create();

@@ -28,8 +28,8 @@ export class AddressEntity {
   @Column({ length: 8, nullable: false })
   zipCode: string;
 
-  // @OneToOne((type) => UserEntity, (user) => user.address, {
-  //   onDelete: 'CASCADE',
-  // })
-  // user: UserEntity;
+  @OneToOne((type) => UserEntity, (user) => user.address, {
+    onDelete: 'CASCADE',
+  })
+  user: UserEntity;
 }

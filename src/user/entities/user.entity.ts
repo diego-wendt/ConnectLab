@@ -8,6 +8,9 @@ import {
   // OneToOne,
   // JoinColumn,
 } from 'typeorm';
+import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn';
+import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
+import { AddressEntity } from './address.entity';
 // import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'user' })
@@ -18,20 +21,20 @@ export class UserEntity {
   @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 50 })
   email: string;
 
-  @Column()
+  @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
   url: string;
 
-  @Column()
+  @Column({ length: 11 })
   phone: string;
 
-  // // @OneToOne((type) => AddressEntity, (address) => address.user, {
-  // //   cascade: true,
-  // // })
-  // // @JoinColumn()
-  // // address: AddressEntity;
+  @OneToOne((type) => AddressEntity, (address) => address.user, {
+    cascade: true,
+  })
+  @JoinColumn()
+  address: AddressEntity;
 
   @Column()
   active: boolean;
