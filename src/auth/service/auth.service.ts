@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { CreateAddressDTO } from 'src/user/dto/create.address.dto';
@@ -7,10 +8,13 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm/repository/Repository';
 import { Inject } from '@nestjs/common/decorators';
 import { CredentialsDto } from '../dto/credentials.dto';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private jwtService: JwtService,
     @Inject('USER_REPOSITORY')
     private userRepository: Repository<UserEntity>,
     @Inject('ADDRESS_REPOSITORY')
@@ -32,31 +36,34 @@ export class AuthService {
         user.salt = bcrypt.genSaltSync(10);
         user.password = bcrypt.hashSync(password, user.salt);
         user.address = this.createAddress(createUser.address);
-        console.log(user);
         const newUser = await this.userRepository.save(user);
-        console.log(newUser);
+        delete newUser.password;
+        delete newUser.salt;
         resolve(newUser);
       } catch (error) {
-        console.log('erro service');
         reject(error);
       }
     });
   }
 
   async signin(credentials: CredentialsDto) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const user = await this.userRepository.findOneBy({
-          email: credentials.email,
-        });
-        if (!user.email || !user.checkPassword(credentials.password)) {
-          reject('1 - usuário ou senha inválidos');
-        }
-        resolve('login efetuado com sucesso');
-      } catch (error) {
-        reject('error');
-      }
+    const user = await this.checkCredentials(credentials);
+    if (user === null) {
+      throw new UnauthorizedException('Invalid username or password');
+    }
+
+    const jwtPayload = {
+      id: user.id,
+      email: user.email,
+      url: user.url,
+      firstname: user.name.split(' ')[0],
+    };
+
+    const token = this.jwtService.sign(jwtPayload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: 10 * 60,
     });
+    return token;
   }
 
   createAddress(addressDto: CreateAddressDTO): AddressEntity {
@@ -71,5 +78,19 @@ export class AuthService {
     address.street = street;
     address.zipCode = zipCode;
     return address;
+  }
+
+  async checkCredentials(credentials: CredentialsDto) {
+    const { email, password } = credentials;
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email,
+        active: true,
+      },
+    });
+    if (user && user.checkPassword(password)) {
+      return user;
+    }
+    return null;
   }
 }

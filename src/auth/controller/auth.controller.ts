@@ -19,11 +19,6 @@ export class AuthController {
 
   @Post('signin')
   async signin(@Body() credentialsDto: CredentialsDto) {
-    try {
-      const credentials = await this.authService.signin(credentialsDto);
-      return credentials;
-    } catch (error) {
-      return 'login não encontrado';
-    }
+    return await this.authService.signin(credentialsDto);
   }
 }

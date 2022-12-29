@@ -11,13 +11,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET,
     });
   }
-
   async validate(payload: any) {
     return {
       id: payload.id,
       name: payload.name,
       email: payload.email,
-      role: payload.role,
+      url: payload.url,
     };
   }
 }
