@@ -5,20 +5,24 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
+  // OneToOne,
+  // JoinColumn,
 } from 'typeorm';
+import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn';
+import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
 import { AddressEntity } from './address.entity';
+import * as bcrypt from 'bcrypt';
+// import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true, length: 50, nullable: false })
+  @Column({ unique: true, length: 50 })
   email: string;
 
   @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
@@ -27,7 +31,9 @@ export class UserEntity {
   @Column({ length: 11 })
   phone: string;
 
-  @OneToOne((type) => AddressEntity, { cascade: true, onDelete: 'CASCADE' })
+  @OneToOne((type) => AddressEntity, (address) => address.user, {
+    cascade: true,
+  })
   @JoinColumn()
   address: AddressEntity;
 
@@ -37,11 +43,8 @@ export class UserEntity {
   @Column()
   salt: string;
 
-  @Column({ nullable: false })
+  @Column()
   password: string;
-
-  @Column({ nullable: false })
-  password2: string;
 
   @CreateDateColumn({ name: 'create_date' })
   createdAt: Date;
@@ -51,4 +54,10 @@ export class UserEntity {
 
   @DeleteDateColumn({ name: 'delete_date' })
   deletedAt: Date;
+
+  checkPassword(password) {
+    if (this.password === bcrypt.hashSync(password, this.salt)) {
+      return true;
+    }
+  }
 }

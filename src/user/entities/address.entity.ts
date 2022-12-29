@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity {
@@ -25,4 +27,9 @@ export class AddressEntity {
 
   @Column({ length: 8, nullable: false })
   zipCode: string;
+
+  @OneToOne((type) => UserEntity, (user) => user.address, {
+    onDelete: 'CASCADE',
+  })
+  user: UserEntity;
 }

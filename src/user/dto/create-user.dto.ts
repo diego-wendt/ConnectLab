@@ -27,9 +27,7 @@ export class CreateUserDto {
   @MaxLength(50)
   email: string;
 
-  //   @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
   @ValidateIf((dto) => dto.url !== '')
-  @MinLength(3)
   @IsUrl()
   url: string;
 
@@ -53,6 +51,6 @@ export class CreateUserDto {
   })
   password: string;
 
-  @Match('password', { message: 'Password don not match' })
+  @Match('password', { message: 'Password do not match' })
   password2: string;
 }
