@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtStrategy } from './core/auth/guards/strategy/jwt.strategy';
+import { DeviceModule } from './device/device.module';
 require('dotenv-flow').config();
 @Module({
   imports: [
@@ -22,6 +23,7 @@ require('dotenv-flow').config();
     // }),
     UserModule,
     AuthModule,
+    DeviceModule,
   ],
   controllers: [],
   providers: [JwtStrategy],

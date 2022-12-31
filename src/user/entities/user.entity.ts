@@ -3,16 +3,16 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  // OneToOne,
-  // JoinColumn,
 } from 'typeorm';
 import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn';
 import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
 import { AddressEntity } from './address.entity';
 import * as bcrypt from 'bcrypt';
-// import { AddressEntity } from './address.entity';
+import { DeviceEntity } from 'src/device/entities/device.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -55,9 +55,20 @@ export class UserEntity {
   @DeleteDateColumn({ name: 'delete_date' })
   deletedAt: Date;
 
+  @ManyToMany(() => DeviceEntity)
+  @JoinTable({ name: 'user_devices' })
+  devices: DeviceEntity[];
+
   checkPassword(password) {
     if (this.password === bcrypt.hashSync(password, this.salt)) {
       return true;
     }
+  }
+
+  addDevice(devices: DeviceEntity[]) {
+    if (this.devices == null) {
+      this.devices = new Array<DeviceEntity>();
+    }
+    this.devices.push(...devices);
   }
 }
