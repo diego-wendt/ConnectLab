@@ -20,7 +20,8 @@ export class DeviceService {
     if (listDevices.length == 0) {
       devices.map(async (device) => {
         const newModel = this.modelRepository.create();
-        const { madeBy, name, photoUrl, type } = device;
+        const { madeBy, name, photoUrl, type, _id } = device;
+        newModel.id_model = _id;
         newModel.name = name;
         newModel.madeBy = madeBy;
         newModel.photoUrl = photoUrl;
