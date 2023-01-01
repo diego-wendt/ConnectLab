@@ -1,25 +1,13 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Put,
-  HttpStatus,
-  HttpCode,
-  Query,
-} from '@nestjs/common';
-import { DeviceService } from 'src/device/services/device.service';
+import { Controller, Body, Post } from '@nestjs/common';
+import { CredentialsDto } from 'src/auth/dto/credentials.dto';
 import { UserService } from '../service/user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private deviceService: UserService) {}
+  constructor(private userService: UserService) {}
 
-  @Post(':id/addDevice')
-  async addDevice(@Body() devices: any, @Param('id') id: any) {
-    // await this.deviceService.create(devices, id);
+  @Post('data')
+  async getData(@Body() CredentialsDto: CredentialsDto) {
+    return await this.userService.getData(CredentialsDto);
   }
 }
