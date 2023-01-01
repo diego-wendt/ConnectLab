@@ -12,7 +12,7 @@ export class DeviceController {
   }
 
   @Post()
-  async create(@Body() createDeviceDto: CreateDeviceDto) {
+  async createDevice(@Body() createDeviceDto: CreateDeviceDto) {
     return await this.deviceService.create(createDeviceDto);
   }
 

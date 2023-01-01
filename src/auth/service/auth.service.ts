@@ -10,6 +10,7 @@ import { Inject } from '@nestjs/common/decorators';
 import { CredentialsDto } from '../dto/credentials.dto';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordDto } from 'src/user/dto/change_password.dto';
 
 @Injectable()
 export class AuthService {
@@ -92,5 +93,20 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async changePassword(changePasswordtDto: ChangePasswordDto) {
+    const user = await this.checkCredentials(changePasswordtDto);
+    if (user) {
+      user.password = bcrypt.hashSync(
+        changePasswordtDto.newPassword,
+        user.salt,
+      );
+      const savedUser = await this.userRepository.save(user);
+      // delete savedUser.password;
+      // delete savedUser.salt;
+      return savedUser;
+    }
+    return 'error';
   }
 }
