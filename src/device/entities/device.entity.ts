@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from 'src/user/entities/user.entity';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { ModelEntity } from './model.entity';
 
 @Entity({ name: 'devices' })
 export class DeviceEntity {
@@ -20,9 +29,13 @@ export class DeviceEntity {
   @Column()
   signal: string;
 
-  // @ManyToOne(() => ModelEntity, (model) => model.model)
-  // model: ModelEntity;
-}
+  @Column()
+  status: boolean;
 
-// @ManyToMany(() => UserEntity, (user) => user.devices)
-// user: UserEntity[];
+  @ManyToOne(() => ModelEntity, (model) => model.model, { cascade: true })
+  @JoinColumn({ name: 'model_id' })
+  model: ModelEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.devices, { onDelete: 'CASCADE' })
+  user: UserEntity;
+}

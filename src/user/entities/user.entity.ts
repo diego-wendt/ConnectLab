@@ -4,7 +4,8 @@ import {
   DeleteDateColumn,
   Entity,
   JoinTable,
-  ManyToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -55,7 +56,7 @@ export class UserEntity {
   @DeleteDateColumn({ name: 'delete_date' })
   deletedAt: Date;
 
-  @ManyToMany(() => DeviceEntity)
+  @OneToMany(() => DeviceEntity, (device) => device.user, { cascade: true })
   @JoinTable({ name: 'user_devices' })
   devices: DeviceEntity[];
 

@@ -1,4 +1,5 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { DeviceEntity } from './device.entity';
 
 @Entity({ name: 'models' })
 export class ModelEntity {
@@ -17,6 +18,6 @@ export class ModelEntity {
   @Column()
   photoUrl: string;
 
-  // @OneToMany(() => DeviceEntity, (device) => device.model)
-  // model: DeviceEntity[];
+  @OneToMany(() => DeviceEntity, (device) => device.model)
+  model: DeviceEntity[];
 }
