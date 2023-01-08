@@ -4,9 +4,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToMany,
   JoinColumn,
 } from 'typeorm';
+import { localDevice } from '../enum/device.local.enum';
 import { ModelEntity } from './model.entity';
 
 @Entity({ name: 'devices' })
@@ -15,7 +15,7 @@ export class DeviceEntity {
   id_device: string;
 
   @Column()
-  customName: string;
+  name: string;
 
   @Column()
   virtual_id: string;
@@ -30,12 +30,16 @@ export class DeviceEntity {
   signal: string;
 
   @Column()
-  status: boolean;
+  switch_state: boolean;
 
-  @ManyToOne(() => ModelEntity, (model) => model.model, { cascade: true })
+  @Column({ type: 'enum', enum: localDevice })
+  place: localDevice;
+
+  @ManyToOne(() => ModelEntity, (model) => model.model)
   @JoinColumn({ name: 'model_id' })
   model: ModelEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.devices, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_devices' })
   user: UserEntity;
 }
