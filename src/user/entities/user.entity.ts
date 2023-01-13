@@ -3,8 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinTable,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -20,22 +18,21 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: false })
   name: string;
 
-  @Column({ unique: true, length: 50 })
+  @Column({ unique: true, length: 50, nullable: false })
   email: string;
 
   @Column({ default: 'https://publicdomainvectors.org/photos/1389952697.png' })
   url: string;
 
-  @Column({ length: 11 })
+  @Column({ length: 11, nullable: true })
   phone: string;
 
   @OneToOne((type) => AddressEntity, (address) => address.user, {
-    cascade: true,
+    cascade: true
   })
-  @JoinColumn()
   address: AddressEntity;
 
   @Column()
@@ -57,7 +54,6 @@ export class UserEntity {
   deletedAt: Date;
 
   @OneToMany(() => DeviceEntity, (device) => device.user, { cascade: true })
-  @JoinTable({ name: 'user_devices' })
   devices: DeviceEntity[];
 
   checkPassword(password) {
@@ -66,10 +62,10 @@ export class UserEntity {
     }
   }
 
-  addDevice(devices: DeviceEntity[]) {
+  addDevice(device: DeviceEntity) {
     if (this.devices == null) {
       this.devices = new Array<DeviceEntity>();
     }
-    this.devices.push(...devices);
+    this.devices.push(device);
   }
 }

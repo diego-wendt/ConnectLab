@@ -1,5 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ChangePasswordDto } from 'src/user/dto/change_password.dto';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpException,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
+import { ChangePasswordDto } from 'src/auth/dto/change_password.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { CredentialsDto } from '../dto/credentials.dto';
 import { AuthService } from '../service/auth.service';
@@ -12,24 +21,34 @@ export class AuthController {
   async signup(@Body() createUser: CreateUserDto) {
     try {
       const user = await this.authService.createUser(createUser);
-      return user;
+      return { message: 'User sucefully created.' };
     } catch (error) {
-      return error;
+      if (error.code == 23505)
+        throw new HttpException('User already registered.', 409);
     }
   }
 
   @Post('signin')
   async signin(@Body() credentialsDto: CredentialsDto) {
-    return await this.authService.signin(credentialsDto);
+    try {
+      const token = await this.authService.signin(credentialsDto);
+      return { token };
+    } catch (error) {
+      throw new HttpException(error.message, error.code);
+    }
   }
 
-  //deixar aqui ou no userController?
+  @UseGuards(JwtAuthGuard)
   @Post('changepassword')
-  async changePassword(@Body() changePasswordtDto: ChangePasswordDto) {
+  async changePassword(
+    @Body() changePasswordtDto: ChangePasswordDto,
+    @Request() request,
+  ) {
+    const { user } = request;
     try {
-      return await this.authService.changePassword(changePasswordtDto);
+      return await this.authService.changePassword(changePasswordtDto, user);
     } catch (error) {
-      return error;
+      throw new HttpException(error.detail, error.code);
     }
   }
 }

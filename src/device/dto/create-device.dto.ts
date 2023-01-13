@@ -10,12 +10,6 @@ import { localDevice } from '../enum/device.local.enum';
 
 export class CreateDeviceDto {
   @IsNotEmpty()
-  @IsEmail()
-  @MinLength(3)
-  @MaxLength(50)
-  email: string;
-
-  @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(50)

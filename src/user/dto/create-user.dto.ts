@@ -11,7 +11,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { Match } from '../validators/match.validator';
+import { Match } from 'src/core/auth/guards/decorator/match.decorator';
 import { CreateAddressDTO } from './create.address.dto';
 
 export class CreateUserDto {

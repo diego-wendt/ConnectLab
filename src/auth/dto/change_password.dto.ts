@@ -6,7 +6,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Match } from 'src/user/validators/match.validator';
+import { Match } from 'src/core/auth/guards/decorator/match.decorator';
+import { NotMatch } from 'src/core/auth/guards/decorator/notMatch.decorator';
 
 export class ChangePasswordDto {
   @IsNotEmpty()
@@ -27,6 +28,9 @@ export class ChangePasswordDto {
   password: string;
 
   @IsNotEmpty()
+  @NotMatch('password', {
+    message: 'New and old passwords must not be the same.',
+  })
   @IsString()
   @IsStrongPassword({
     minLength: 8,
