@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { OneToOne } from 'typeorm/decorator/relations/OneToOne';
 import { UserEntity } from './user.entity';
 
@@ -31,5 +31,6 @@ export class AddressEntity {
   @OneToOne((type) => UserEntity, (user) => user.address, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 }

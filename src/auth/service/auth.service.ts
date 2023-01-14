@@ -8,8 +8,10 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm/repository/Repository';
 import { Inject } from '@nestjs/common/decorators';
 import { CredentialsDto } from '../dto/credentials.dto';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordDto } from 'src/auth/dto/change_password.dto';
+import { PayloadDto } from '../dto/payload.dto';
+import { CustomError } from 'src/core/errors/errors';
 
 @Injectable()
 export class AuthService {
@@ -23,8 +25,8 @@ export class AuthService {
 
   async createUser(createUser: CreateUserDto) {
     return new Promise(async (resolve, reject) => {
-      const { name, url, email, phone, password } = createUser;
       try {
+        const { name, url, email, phone, password } = createUser;
         const user = this.userRepository.create();
         user.name = name;
         user.email = email;
@@ -37,33 +39,45 @@ export class AuthService {
         user.password = bcrypt.hashSync(password, user.salt);
         user.address = this.createAddress(createUser.address);
         const newUser = await this.userRepository.save(user);
+        console.log(newUser);
         delete newUser.password;
         delete newUser.salt;
         resolve(newUser);
       } catch (error) {
-        reject(error);
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
     });
   }
 
   async signin(credentials: CredentialsDto) {
-    const user = await this.checkCredentials(credentials);
-    if (user === null) {
-      throw new UnauthorizedException('Invalid username or password');
+    try {
+      const user = await this.checkCredentials(credentials);
+      if (!user) {
+        throw new CustomError('Incorrect user or password.', 404);
+      }
+
+      const jwtPayload = {
+        id: user.id,
+        email: user.email,
+        url: user.url,
+        firstName: user.name.split(' ')[0],
+      };
+
+      const token = this.jwtService.sign(jwtPayload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: 100 * 60,
+      });
+      return token;
+    } catch (error) {
+      throw error;
+      // reject({
+      //   code: error.code,
+      //   detail: error.detail,
+      // });
     }
-
-    const jwtPayload = {
-      id: user.id,
-      email: user.email,
-      url: user.url,
-      firstname: user.name.split(' ')[0],
-    };
-
-    const token = this.jwtService.sign(jwtPayload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: 10 * 60,
-    });
-    return token;
   }
 
   createAddress(addressDto: CreateAddressDTO): AddressEntity {
@@ -92,5 +106,48 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async changePassword(
+    changePasswordtDto: ChangePasswordDto,
+    payload: PayloadDto,
+  ) {
+    try {
+      const { password, newPassword, email } = changePasswordtDto;
+
+      if (payload.email !== email) {
+        throw new Error();
+      }
+
+      const credentials = { email, password };
+
+      const user = await this.checkCredentials(credentials);
+      if (user) {
+        user.password = bcrypt.hashSync(newPassword, user.salt);
+        const savedUser = await this.userRepository.save(user);
+          return {message:"Your password has been successfully changed."};
+      }
+      return 'error';
+    } catch (error) {}
+  }
+
+  validateToken(jwtToken: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const token = await this.jwtService.verifyAsync(jwtToken, {
+          ignoreExpiration: false,
+        });
+        resolve(token);
+      } catch (error) {
+        reject({
+          code: 401,
+          detail: 'JWT expired.',
+        });
+      }
+    });
+  }
+
+  decodedToken(jwtToken: string) {
+    return this.jwtService.decode(jwtToken);
   }
 }

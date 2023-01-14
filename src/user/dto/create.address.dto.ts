@@ -1,9 +1,11 @@
 import {
   IsNotEmpty,
   IsNumberString,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateAddressDTO {
@@ -37,7 +39,7 @@ export class CreateAddressDTO {
   @MaxLength(2)
   state: string;
 
-  @IsNotEmpty()
+  @ValidateIf((o) => o.complement != "")
   @IsString()
   @MinLength(3)
   @MaxLength(50)
