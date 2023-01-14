@@ -13,6 +13,7 @@ import { HttpException } from '@nestjs/common/exceptions';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
 import { CreateDeviceDto } from '../dto/create-device.dto';
 import { IdDeviceDto } from '../dto/id-device.dto';
+import { PlaceDto } from '../dto/place-dto';
 import { DeviceService } from '../services/device.service';
 
 @UseGuards(JwtAuthGuard)
@@ -52,15 +53,10 @@ export class DeviceController {
   }
 
   @Get()
-  async listUserDevices(
-    @Request() request,
-    @Query('page') page: string,
-    @Query('size') size: string,
-    @Query('place') place: string,
-  ) {
+  async listUserDevices(@Request() request, @Query() query: PlaceDto) {
     const { user } = request;
     try {
-      return await this.deviceService.listUserDevices(user, page, size, place);
+      return await this.deviceService.listUserDevices(user, query);
     } catch (error) {
       throw new HttpException(error.detail, error.code);
     }
@@ -69,7 +65,7 @@ export class DeviceController {
   @Get('device')
   async findDevice(@Request() request, @Body() device: IdDeviceDto) {
     const { user } = request;
-    const relation = { model: true }
+    const relation = { model: true };
     try {
       return await this.deviceService.findDevice(device, user, relation);
     } catch (error) {

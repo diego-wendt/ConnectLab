@@ -7,6 +7,7 @@ import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm/repository/Repository';
 import { CreateDeviceDto } from '../dto/create-device.dto';
 import { IdDeviceDto } from '../dto/id-device.dto';
+import { PlaceDto } from '../dto/place-dto';
 import { DeviceEntity } from '../entities/device.entity';
 import { ModelEntity } from '../entities/model.entity';
 import { localDevice } from '../enum/device.local.enum';
@@ -108,12 +109,12 @@ export class DeviceService {
     });
   }
 
-  async selectFilter(place: string | null, id: string) {
+  async selectFilter(place: localDevice | null, id: string) {
     let filtro = {};
     if (place) {
       filtro = {
         user: { id: id },
-        place: parseInt(localDevice[place.toUpperCase()]),
+        place: parseInt(localDevice[place]),
       };
     } else {
       {
@@ -131,21 +132,17 @@ export class DeviceService {
     return { totalDevices, totalPages, take, skip };
   }
 
-  async listUserDevices(
-    payload: PayloadDto,
-    page: string,
-    size: string,
-    place: string,
-  ) {
+  async listUserDevices(payload: PayloadDto, query: PlaceDto) {
     const { id } = payload;
+    const { page, size, place } = query;
 
     try {
       const skip = parseInt(page) || 0;
       const take = parseInt(size) || 10;
+
       const filterPlace = place || null;
 
       const filtro = await this.selectFilter(filterPlace, id);
-
       const devices = await this.deviceRepository.findAndCount({
         where: filtro,
         relations: { model: true },
