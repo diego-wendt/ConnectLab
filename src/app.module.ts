@@ -14,13 +14,7 @@ require('dotenv-flow').config();
       envFilePath: '.env',
       isGlobal: true,
     }),
-    // JwtModule.register({
-    //   secret: 'jb2KURr1O89JjfcvCPIZkh3qQQ',
-    //   signOptions: {
-    //     expiresIn: 60 * 6,
-    //   },
-    // }),
-    // PassportModule,
+    PassportModule,
     UserModule,
     AuthModule,
     DeviceModule,

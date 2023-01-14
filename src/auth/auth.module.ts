@@ -9,16 +9,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [
-    UserEntity,
-    PassportModule,
-    JwtModule.register({
-      secret: 'jb2KURr1O89JjfcvCPIZkh3qQQ',
-      signOptions: {
-        expiresIn: 60 * 6,
-      },
-    }),
-  ],
+  imports: [UserEntity, PassportModule],
   controllers: [AuthController],
   providers: [
     AuthService,
