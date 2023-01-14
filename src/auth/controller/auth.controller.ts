@@ -12,12 +12,13 @@ import { ChangePasswordDto } from 'src/auth/dto/change_password.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { CredentialsDto } from '../dto/credentials.dto';
 import { AuthService } from '../service/auth.service';
+import { Put } from '@nestjs/common/decorators';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup')
+  @Post('register')
   async signup(@Body() createUser: CreateUserDto) {
     try {
       const user = await this.authService.createUser(createUser);
@@ -28,7 +29,7 @@ export class AuthController {
     }
   }
 
-  @Post('signin')
+  @Post('login')
   async signin(@Body() credentialsDto: CredentialsDto) {
     try {
       const token = await this.authService.signin(credentialsDto);
@@ -39,7 +40,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('changepassword')
+  @Put('changepassword')
   async changePassword(
     @Body() changePasswordtDto: ChangePasswordDto,
     @Request() request,
