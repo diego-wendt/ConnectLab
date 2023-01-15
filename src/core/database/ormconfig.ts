@@ -10,15 +10,15 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   entities: [
-    __dirname + '/../../**/**/*.entity{.ts,.js}', // As entidades serão buscadas em todas as pastas e precisa existir .entity no nome do arquivo.
-    'dist/**/**/*.entity.js', // Corrigindo possível problema de importação da Entity.
+    __dirname + '/../../**/**/*.entity{.ts,.js}',
+    'dist/**/**/*.entity.js',
   ],
   migrations: [
-    // __dirname + '../migrations/*{.ts,.js}',
+    __dirname + '../migrations/*{.ts,.js}',
     __dirname + './migrations/*{.ts,.js}',
-    'dist/core/database/migrations/*{.ts,.js}',
+    "dist/core/database/migrations/*{.ts,.js}"
   ],
-  synchronize: true, //Essa propriedade não deve ser utilizada em produção! Caso contrário os dados poderão ser perdidos.
+  synchronize: false,
   migrationsRun: false,
   migrationsTableName: 'history',
 });

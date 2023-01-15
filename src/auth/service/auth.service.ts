@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { CreateAddressDTO } from 'src/user/dto/create.address.dto';
@@ -7,10 +8,14 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm/repository/Repository';
 import { Inject } from '@nestjs/common/decorators';
 import { CredentialsDto } from '../dto/credentials.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordDto } from 'src/auth/dto/change_password.dto';
+import { PayloadDto } from '../dto/payload.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private jwtService: JwtService,
     @Inject('USER_REPOSITORY')
     private userRepository: Repository<UserEntity>,
     @Inject('ADDRESS_REPOSITORY')
@@ -19,8 +24,8 @@ export class AuthService {
 
   async createUser(createUser: CreateUserDto) {
     return new Promise(async (resolve, reject) => {
-      const { name, url, email, phone, password } = createUser;
       try {
+        const { name, url, email, phone, password } = createUser;
         const user = this.userRepository.create();
         user.name = name;
         user.email = email;
@@ -32,13 +37,15 @@ export class AuthService {
         user.salt = bcrypt.genSaltSync(10);
         user.password = bcrypt.hashSync(password, user.salt);
         user.address = this.createAddress(createUser.address);
-        console.log(user);
         const newUser = await this.userRepository.save(user);
-        console.log(newUser);
+        delete newUser.password;
+        delete newUser.salt;
         resolve(newUser);
       } catch (error) {
-        console.log('erro service');
-        reject(error);
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
     });
   }
@@ -46,15 +53,31 @@ export class AuthService {
   async signin(credentials: CredentialsDto) {
     return new Promise(async (resolve, reject) => {
       try {
-        const user = await this.userRepository.findOneBy({
-          email: credentials.email,
-        });
-        if (!user.email || !user.checkPassword(credentials.password)) {
-          reject('1 - usuário ou senha inválidos');
+        const user = await this.checkCredentials(credentials);
+        if (!user) {
+          reject({
+            code: 403,
+            detail: 'Incorrect user or password.',
+          });
         }
-        resolve('login efetuado com sucesso');
+
+        const jwtPayload = {
+          id: user.id,
+          email: user.email,
+          url: user.url,
+          firstName: user.name.split(' ')[0],
+        };
+
+        const token = this.jwtService.sign(jwtPayload, {
+          secret: process.env.JWT_SECRET,
+          expiresIn: 100 * 60,
+        });
+        resolve(token);
       } catch (error) {
-        reject('error');
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
     });
   }
@@ -71,5 +94,75 @@ export class AuthService {
     address.street = street;
     address.zipCode = zipCode;
     return address;
+  }
+
+  async checkCredentials(credentials: CredentialsDto) {
+    const { email, password } = credentials;
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email,
+        active: true,
+      },
+    });
+    if (user && user.checkPassword(password)) {
+      return user;
+    }
+    return null;
+  }
+
+  async changePassword(
+    changePasswordtDto: ChangePasswordDto,
+    payload: PayloadDto,
+  ) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { password, newPassword, email } = changePasswordtDto;
+
+        if (payload.email !== email) {
+          reject({
+            code: 409,
+            detail: 'Insert a correct e-mail.',
+          });
+        }
+
+        const credentials = { email, password };
+
+        const user = await this.checkCredentials(credentials);
+        if (user) {
+          user.password = bcrypt.hashSync(newPassword, user.salt);
+          const savedUser = await this.userRepository.save(user);
+          resolve({ message: 'Your password has been successfully changed.' });
+        }
+        reject({
+          code: 403,
+          detail: 'Invalid user or password.',
+        });
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
+      }
+    });
+  }
+
+  validateToken(jwtToken: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const token = await this.jwtService.verifyAsync(jwtToken, {
+          ignoreExpiration: false,
+        });
+        resolve(token);
+      } catch (error) {
+        reject({
+          code: 401,
+          detail: 'JWT expired.',
+        });
+      }
+    });
+  }
+
+  decodedToken(jwtToken: string) {
+    return this.jwtService.decode(jwtToken);
   }
 }
