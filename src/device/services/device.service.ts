@@ -180,8 +180,8 @@ export class DeviceService {
         const device = await this.findDevice(id_device, payload);
         device.switch_state = !device.switch_state;
         await this.deviceRepository.save(device);
-
-        resolve(device);
+        const {switch_state} = device
+        resolve({ switch_state: device.switch_state });
       } catch (error) {
         reject({
           code: error.code,
@@ -199,7 +199,7 @@ export class DeviceService {
         console.log(device);
         await this.deviceRepository.delete(device.id_device);
 
-        resolve(device);
+        resolve({ message: 'Device successfully removed.' });
       } catch (error) {
         reject({
           code: 400,
