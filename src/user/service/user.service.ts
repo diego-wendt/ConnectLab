@@ -78,7 +78,7 @@ export class UserService {
 
           delete user.password;
           delete user.salt;
-          resolve(user);
+          resolve({ message: 'User successfully updated.' });
         }
         reject({
           code: 404,

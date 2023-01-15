@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { DeviceEntity } from './entities/device.entity';
 import { ModelEntity } from './entities/model.entity';
 
-export const deviceProviders = [
+export const DeviceProviders = [
   {
     provide: 'DEVICE_REPOSITORY',
     useFactory: (dataSource: DataSource) =>

@@ -1,6 +1,6 @@
 import { AppDataSource } from './ormconfig';
 
-export const databaseProviders = [
+export const DatabaseProviders = [
   {
     provide: 'DATA_SOURCE',
     useFactory: async () => {

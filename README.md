@@ -186,27 +186,7 @@ Headers: {
 ##### Resultado esperado:
 
 ```json
-{
-  "id": "fa6776fc-84ae-48eb-983a-2f3f4b4dfc96",
-  "name": "Fulano da Silva",
-  "email": "umemail@qualquer.com",
-  "url": "https://exemplodeendereco.com/imagem.png",
-  "phone": "55123456789",
-  "active": true,
-  "createdAt": "2023-01-13T01:21:19.164Z",
-  "updatedAt": "2023-01-13T05:45:11.117Z",
-  "deletedAt": null,
-  "address": {
-    "id": "3ec8e468-7ba3-43be-af2e-307d731e5f36",
-    "street": "Rua das Acácias",
-    "number": "14",
-    "complement": "Lado do 71",
-    "neighborhood": "Vila do Chaves",
-    "city": "Acapulco",
-    "state": "AC",
-    "zipCode": "12345678"
-  }
-}
+{ "message": "User successfully updated." }
 ```
 
 #### Alterar senha do usuário:
@@ -456,7 +436,7 @@ Headers: {
 ##### Resultado esperado:
 
 ```json
-{"message": "Device successfully removed."}
+{ "message": "Device successfully removed." }
 ```
 
 #### Listar locais para instalar dispositivos:

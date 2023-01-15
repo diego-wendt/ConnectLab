@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { DeviceService } from './services/device.service';
 import { DeviceController } from './controller/device.controller';
-import { databaseProviders } from 'src/core/database/database.providers';
-import { deviceProviders } from './device.providers';
-import { userProviders } from 'src/user/user.providers';
+import { DatabaseProviders } from 'src/core/database/database.providers';
+import { DeviceProviders } from './device.providers';
+import { UserProviders } from 'src/user/user.providers';
 import { DeviceUtils } from './utils/device.utils';
 import { UserService } from 'src/user/service/user.service';
 
@@ -12,9 +12,9 @@ import { UserService } from 'src/user/service/user.service';
   providers: [
     DeviceUtils,
     DeviceService,
-    ...databaseProviders,
-    ...deviceProviders,
-    ...userProviders,
+    ...DatabaseProviders,
+    ...DeviceProviders,
+    ...UserProviders,
     UserService,
   ],
 })

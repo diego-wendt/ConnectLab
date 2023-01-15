@@ -192,7 +192,7 @@ export class DeviceService {
   }
 
   async deleteDevice(id_device: IdDeviceDto, payload: PayloadDto) {
-    // console.log(id_device);
+
     return new Promise(async (resolve, reject) => {
       try {
         const device = await this.findDevice(id_device, payload);
