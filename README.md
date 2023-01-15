@@ -90,7 +90,7 @@ Propriedades marcadas com \* são opcionais e podem ser enviadas com campo vazio
 Exemplo: "phone":"".
 
 ```json
-POST - http://localhost:3000/auth/signup
+POST - "http://localhost:3000/auth/signup"
 
 Headers: {
 	"Content-Type": "application/json"
@@ -124,7 +124,7 @@ Headers: {
 #### Listar um usuário:
 
 ```json
-GET - http://localhost:3000/user/
+GET - "http://localhost:3000/user/"
 
 Headers: {
 	"Authorization": "Bearer token"
@@ -160,7 +160,7 @@ Headers: {
 #### Atualizar os dados do usuário:
 
 ```json
-PUT - http://localhost:3000/user
+PUT - "http://localhost:3000/user"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -192,7 +192,7 @@ Headers: {
 #### Alterar senha do usuário:
 
 ```json
-PUT - http://localhost:3000/auth/changepassword
+PUT - "http://localhost:3000/auth/changepassword"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -216,7 +216,7 @@ Headers: {
 #### Remover o usuário:
 
 ```json
-DELETE - http://localhost:3000/user/
+DELETE - "http://localhost:3000/user/"
 
 Headers: {"Authorization": "Bearer token"}
 ```
@@ -232,7 +232,7 @@ Headers: {"Authorization": "Bearer token"}
 #### Autenticar o usuário:
 
 ```json
-POST - http://localhost:3000/auth/login
+POST - "http://localhost:3000/auth/login"
 
 Headers: {"Content-Type": "application/json"}
 
@@ -255,7 +255,7 @@ Headers: {"Content-Type": "application/json"}
 #### Listar todos modelos de dispotivos disponíveis:
 
 ```json
-GET - localhost:3000/devices/models
+GET - "http://localhost:3000/devices/models"
 
 Headers: {"Authorization": "Bearer token"}
 ```
@@ -284,7 +284,7 @@ Headers: {"Authorization": "Bearer token"}
 | `place`    | `string` | Local de instalação do dispositivo | Dado obtido do endpoint "Listar locais para instalar dispositivos." Apenas letras maiúsculas. |
 
 ```json
-POST - localhost:3000/devices
+POST - "http://localhost:3000/devices"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -307,7 +307,7 @@ Headers: {
 #### Detalhar um dispositivo:
 
 ```json
-GET - localhost:3000/devices/device
+GET - "localhost:3000/devices/device"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -342,7 +342,7 @@ Headers: {
 #### Listar vários dispositivos:
 
 ```json
-GET - localhost:3000/devices/?page&size&place
+GET - "http://localhost:3000/devices/?page&size&place"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -376,7 +376,7 @@ Headers: {
 					"name": "Lâmpada LED",
 					"type": "Energia",
 					"madeBy": "Intelbras",
-					"photoUrl": "https://intelbras.vteximg.com.br/arquivos/ids/160115-1000-1000/ews_407_front_cor.jpg?v=637564221001370000"
+					"photoUrl": "https://url.endereco.imagem"
 				}
 			}
     ...
@@ -395,7 +395,7 @@ Headers: {
 #### Alterar estado do dispositivo:
 
 ```json
-PATCH - http://localhost:3000/devices
+PATCH - "http://localhost:3000/devices"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -423,7 +423,7 @@ Headers: {
 #### Excluir o dispositivo:
 
 ```json
-DELETE - http://localhost:3000/devices
+DELETE - "http://localhost:3000/devices"
 
 Headers: {
   "Authorization": "Bearer token",
@@ -442,7 +442,7 @@ Headers: {
 #### Listar locais para instalar dispositivos:
 
 ```json
-GET - localhost:3000/devices/places
+GET - "http://localhost:3000/devices/places"
 
 Headers: {"Authorization": "Bearer token",}
 ```
