@@ -456,16 +456,7 @@ Headers: {
 ##### Resultado esperado:
 
 ```json
-{
-  "id_device": "7d1dc67c-009c-4e60-84ed-a9e2b08b009f",
-  "name": "Lampada da sala",
-  "virtual_id": "3C4693D0353918E",
-  "ip_address": "85.249.67.72",
-  "mac_address": "F2:31:69:9D:EC:47",
-  "signal": "-48 dbm",
-  "switch_state": false,
-  "place": 2
-}
+{"message": "Device successfully removed."}
 ```
 
 #### Listar locais para instalar dispositivos:
