@@ -14,10 +14,11 @@ export const AppDataSource = new DataSource({
     'dist/**/**/*.entity.js',
   ],
   migrations: [
+    __dirname + '../migrations/*{.ts,.js}',
     __dirname + './migrations/*{.ts,.js}',
-    'dist/core/database/migrations/*{.ts,.js}',
+    "dist/core/database/migrations/*{.ts,.js}"
   ],
-  synchronize: true,
+  synchronize: false,
   migrationsRun: false,
   migrationsTableName: 'history',
 });
