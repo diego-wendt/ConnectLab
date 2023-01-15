@@ -5,6 +5,7 @@ import {
   HttpException,
   UseGuards,
   Request,
+  HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
@@ -24,8 +25,13 @@ export class AuthController {
       const user = await this.authService.createUser(createUser);
       return { message: 'User sucefully created.' };
     } catch (error) {
-      if (error.code == 23505)
-        throw new HttpException('User already registered.', 409);
+      if (error.code == 23505) {
+        throw new HttpException(
+          'User already registered.',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(error.detail, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -35,7 +41,7 @@ export class AuthController {
       const token = await this.authService.signin(credentialsDto);
       return { token };
     } catch (error) {
-      throw new HttpException(error.message, error.code);
+      throw new HttpException(error.detail, error.code);
     }
   }
 

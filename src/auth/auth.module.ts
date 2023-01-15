@@ -5,7 +5,7 @@ import { DatabaseProviders } from 'src/core/database/database.providers';
 import { UserProviders } from 'src/user/user.providers';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { JwtStrategy } from 'src/core/auth/guards/strategy/jwt.strategy';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({

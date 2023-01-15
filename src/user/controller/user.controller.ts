@@ -8,6 +8,8 @@ import {
   Request,
   Put,
   Get,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -38,12 +40,16 @@ export class UserController {
     }
   }
 
+  @HttpCode(204)
   @Delete()
   async deleteUser(@Request() request) {
     const { user } = request;
     try {
       return await this.userService.deleteUser(user);
     } catch (error) {
+      if (error.code === 404) {
+        throw new HttpException(error.detail, HttpStatus.OK);
+      }
       throw new HttpException(error.detail, error.code);
     }
   }

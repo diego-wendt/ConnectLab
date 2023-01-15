@@ -45,11 +45,7 @@ export class DeviceController {
 
   @Get('places')
   async getPlaces() {
-    try {
-      return await this.deviceService.getPlaces();
-    } catch (error) {
-      throw new HttpException(error.detail, error.code);
-    }
+    return await this.deviceService.getPlaces();
   }
 
   @Get()

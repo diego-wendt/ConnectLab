@@ -11,7 +11,6 @@ import { CredentialsDto } from '../dto/credentials.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordDto } from 'src/auth/dto/change_password.dto';
 import { PayloadDto } from '../dto/payload.dto';
-import { CustomError } from 'src/core/errors/errors';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +38,6 @@ export class AuthService {
         user.password = bcrypt.hashSync(password, user.salt);
         user.address = this.createAddress(createUser.address);
         const newUser = await this.userRepository.save(user);
-        console.log(newUser);
         delete newUser.password;
         delete newUser.salt;
         resolve(newUser);
@@ -53,31 +51,35 @@ export class AuthService {
   }
 
   async signin(credentials: CredentialsDto) {
-    try {
-      const user = await this.checkCredentials(credentials);
-      if (!user) {
-        throw new CustomError('Incorrect user or password.', 404);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await this.checkCredentials(credentials);
+        if (!user) {
+          reject({
+            code: 403,
+            detail: 'Incorrect user or password.',
+          });
+        }
+
+        const jwtPayload = {
+          id: user.id,
+          email: user.email,
+          url: user.url,
+          firstName: user.name.split(' ')[0],
+        };
+
+        const token = this.jwtService.sign(jwtPayload, {
+          secret: process.env.JWT_SECRET,
+          expiresIn: 100 * 60,
+        });
+        resolve(token);
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
-
-      const jwtPayload = {
-        id: user.id,
-        email: user.email,
-        url: user.url,
-        firstName: user.name.split(' ')[0],
-      };
-
-      const token = this.jwtService.sign(jwtPayload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: 100 * 60,
-      });
-      return token;
-    } catch (error) {
-      throw error;
-      // reject({
-      //   code: error.code,
-      //   detail: error.detail,
-      // });
-    }
+    });
   }
 
   createAddress(addressDto: CreateAddressDTO): AddressEntity {
@@ -112,23 +114,36 @@ export class AuthService {
     changePasswordtDto: ChangePasswordDto,
     payload: PayloadDto,
   ) {
-    try {
-      const { password, newPassword, email } = changePasswordtDto;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { password, newPassword, email } = changePasswordtDto;
 
-      if (payload.email !== email) {
-        throw new Error();
+        if (payload.email !== email) {
+          reject({
+            code: 409,
+            detail: 'Insert a correct e-mail.',
+          });
+        }
+
+        const credentials = { email, password };
+
+        const user = await this.checkCredentials(credentials);
+        if (user) {
+          user.password = bcrypt.hashSync(newPassword, user.salt);
+          const savedUser = await this.userRepository.save(user);
+          resolve({ message: 'Your password has been successfully changed.' });
+        }
+        reject({
+          code: 403,
+          detail: 'Invalid user or password.',
+        });
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
-
-      const credentials = { email, password };
-
-      const user = await this.checkCredentials(credentials);
-      if (user) {
-        user.password = bcrypt.hashSync(newPassword, user.salt);
-        const savedUser = await this.userRepository.save(user);
-          return {message:"Your password has been successfully changed."};
-      }
-      return 'error';
-    } catch (error) {}
+    });
   }
 
   validateToken(jwtToken: string) {

@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { Inject } from '@nestjs/common/decorators';
 import { PayloadDto } from 'src/auth/dto/payload.dto';
-import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { CustomError } from 'src/core/errors/errors';
 
 @Injectable()
 export class UserService {
@@ -14,38 +12,57 @@ export class UserService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async getUserAndRelation(payload: PayloadDto, relation: Object) {
-    const { id } = payload;
-    const user = await this.userRepository.findOne({
-      where: {
-        id: id,
-        active: true,
-      },
-      relations: relation,
+  async getUserAndRelation(
+    payload: PayloadDto,
+    relation: Object,
+  ): Promise<UserEntity> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { id } = payload;
+        const user = await this.userRepository.findOne({
+          where: {
+            id: id,
+            active: true,
+          },
+          relations: relation,
+        });
+
+        if (!user) {
+          reject({
+            code: 404,
+            detail: 'User not found.',
+          });
+        }
+        resolve(user);
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
+      }
     });
-
-    if (!user) {
-      throw new CustomError('User not found.', 404);
-    }
-
-    return user;
   }
 
-  async getUser(payload: PayloadDto) {
-    try {
-      const user = await this.getUserAndRelation(payload, { address: true });
+  async getUser(payload: PayloadDto): Promise<UserEntity> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await this.getUserAndRelation(payload, { address: true });
 
-      if (user) {
-        if (!user.phone) {
-          delete user.phone;
+        if (user) {
+          if (!user.phone) {
+            delete user.phone;
+          }
+          delete user.password;
+          delete user.salt;
+          resolve(user);
         }
-        delete user.password;
-        delete user.salt;
-        return user;
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
-    } catch (error) {
-      throw Error;
-    }
+    });
   }
 
   async updateUser(updateUser: UpdateUserDto, payload: PayloadDto) {
@@ -80,14 +97,10 @@ export class UserService {
           delete user.salt;
           resolve({ message: 'User successfully updated.' });
         }
-        reject({
-          code: 404,
-          detail: 'Incorrect user or password.',
-        });
       } catch (error) {
         reject({
-          code: 400,
-          detail: 'Error.',
+          code: error.status,
+          detail: error.response.message,
         });
       }
     });
@@ -97,33 +110,20 @@ export class UserService {
     return new Promise(async (resolve, reject) => {
       try {
         const { id } = payload;
-        const user = await this.userRepository.findOne({
-          where: {
-            id: id,
-          },
+        const { affected } = await this.userRepository.delete({
+          id: id,
         });
-        if (user) {
-          const { affected } = await this.userRepository.delete({
-            id: id,
-          });
-          if (affected == 0)
-            resolve({
-              code: 200,
-              detail: 'No user to remove.',
-            });
-          resolve({
-            code: 200,
-            detail: 'User sucefully removed.',
+        if (affected === 0) {
+          reject({
+            code: 404,
+            detail: 'User not found or unable to remove.',
           });
         }
-        reject({
-          code: 400,
-          detail: 'Error.',
-        });
+        resolve({ message: 'User sucefully removed.' });
       } catch (error) {
         reject({
-          code: 400,
-          detail: 'Error.',
+          code: error.code,
+          detail: error.detail,
         });
       }
     });

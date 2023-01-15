@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { PayloadDto } from 'src/auth/dto/payload.dto';
-import { CustomError } from 'src/core/errors/errors';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm/repository/Repository';
@@ -28,51 +27,75 @@ export class DeviceService {
   ) {}
 
   async createModels() {
-    try {
-      devices.map(async (device) => {
-        const newModel = this.modelRepository.create();
-        const { madeBy, name, photoUrl, type, _id } = device;
-        newModel.id_model = _id;
-        newModel.name = name;
-        newModel.madeBy = madeBy;
-        newModel.photoUrl = photoUrl;
-        newModel.type = type;
-        await this.modelRepository.save(newModel);
-      });
-    } catch (error) {}
+    return new Promise(async (resolve, reject) => {
+      try {
+        devices.map(async (device) => {
+          const newModel = this.modelRepository.create();
+          const { madeBy, name, photoUrl, type, _id } = device;
+          newModel.id_model = _id;
+          newModel.name = name;
+          newModel.madeBy = madeBy;
+          newModel.photoUrl = photoUrl;
+          newModel.type = type;
+          await this.modelRepository.save(newModel);
+        });
+        resolve({ message: 'Models has been registered.' });
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
+      }
+    });
   }
 
   async findModelsRepository() {
     return await this.modelRepository.find();
   }
 
-  async findOneModel(createDeviceDto: CreateDeviceDto) {
-    const model = await this.modelRepository.findOne({
-      where: { id_model: createDeviceDto.model_id },
+  async findOneModel(createDeviceDto: CreateDeviceDto): Promise<ModelEntity> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const model = await this.modelRepository.findOne({
+          where: { id_model: createDeviceDto.model_id },
+        });
+        if (!model) {
+          reject({
+            code: 404,
+            detail: 'Model not found.',
+          });
+        }
+        resolve(model);
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
+      }
     });
-    if (!model) {
-      throw new CustomError('Model not found', 404);
-    }
-    return model;
   }
 
   async findAllModels() {
-    try {
-      const models = await this.findModelsRepository();
-      if (models.length === 0) {
-        return models;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const models = await this.findModelsRepository();
+        if (models.length > 1) {
+          resolve(models);
+        }
+        await this.createModels();
+        const modelList = await this.findModelsRepository();
+        resolve(modelList);
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
       }
-      await this.createModels();
-      return await this.findModelsRepository();
-    } catch (error) {
-      throw new CustomError('error', 400);
-    }
+    });
   }
 
   async getPlaces() {
-    try {
-      return { places: localDevice };
-    } catch (error) {}
+    return { places: localDevice };
   }
 
   async create(createDeviceDto: CreateDeviceDto, payload: PayloadDto) {
@@ -102,8 +125,8 @@ export class DeviceService {
         return 'erro';
       } catch (error) {
         reject({
-          code: 400,
-          detail: 'Error.',
+          code: error.code,
+          detail: error.detail,
         });
       }
     });
@@ -126,52 +149,68 @@ export class DeviceService {
     return filtro;
   }
 
-  async pagination(totalDevices, filtro, take, skip) {
+  async pagination(totalDevices, take, skip) {
     const totalPages = Math.ceil(totalDevices / take);
-
     return { totalDevices, totalPages, take, skip };
   }
 
   async listUserDevices(payload: PayloadDto, query: PlaceDto) {
-    const { id } = payload;
-    const { page, size, place } = query;
+    return new Promise(async (resolve, reject) => {
+      const { id } = payload;
+      const { page, size, place } = query;
 
-    try {
-      const skip = parseInt(page) || 0;
-      const take = parseInt(size) || 10;
+      try {
+        const skip = parseInt(page) || 0;
+        const take = parseInt(size) || 10;
 
-      const filterPlace = place || null;
+        const filterPlace = place || null;
 
-      const filtro = await this.selectFilter(filterPlace, id);
-      const devices = await this.deviceRepository.findAndCount({
-        where: filtro,
-        relations: { model: true },
-        skip: skip,
-        take: take,
-      });
+        const filtro = await this.selectFilter(filterPlace, id);
+        const devices = await this.deviceRepository.findAndCount({
+          where: filtro,
+          relations: { model: true },
+          skip: skip,
+          take: take,
+        });
 
-      const pagination = await this.pagination(devices[1], filtro, take, skip);
+        const pagination = await this.pagination(devices[1], take, skip);
 
-      return { devices, pagination };
-    } catch (error) {
-      throw error;
-    }
+        resolve({ devices, pagination });
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
+      }
+    });
   }
 
   async findDevice(
     { id_device }: IdDeviceDto,
     payload: PayloadDto,
     relation?: object,
-  ) {
-    const device = await this.deviceRepository.findOne({
-      where: { user: { id: payload.id }, id_device: id_device },
-      relations: relation,
-    });
+  ): Promise<DeviceEntity> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const device = await this.deviceRepository.findOne({
+          where: { user: { id: payload.id }, id_device: id_device },
+          relations: relation,
+        });
 
-    if (!device) {
-      throw new CustomError('Device not found.', 404);
-    }
-    return device;
+        if (!device) {
+          reject({
+            code: 404,
+            detail: 'Device not found.',
+          });
+        }
+        resolve(device);
+      } catch (error) {
+        reject({
+          code: error.code,
+          detail: error.detail,
+        });
+      }
+    });
   }
 
   async switchDevice(id_device: IdDeviceDto, payload: PayloadDto) {
@@ -180,30 +219,27 @@ export class DeviceService {
         const device = await this.findDevice(id_device, payload);
         device.switch_state = !device.switch_state;
         await this.deviceRepository.save(device);
-        const {switch_state} = device
         resolve({ switch_state: device.switch_state });
       } catch (error) {
         reject({
           code: error.code,
-          detail: error.message,
+          detail: error.detail,
         });
       }
     });
   }
 
   async deleteDevice(id_device: IdDeviceDto, payload: PayloadDto) {
-
     return new Promise(async (resolve, reject) => {
       try {
         const device = await this.findDevice(id_device, payload);
-        console.log(device);
         await this.deviceRepository.delete(device.id_device);
 
         resolve({ message: 'Device successfully removed.' });
       } catch (error) {
         reject({
-          code: 400,
-          detail: 'Error.',
+          code: error.code,
+          detail: error.detail,
         });
       }
     });
