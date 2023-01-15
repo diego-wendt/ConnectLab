@@ -112,8 +112,8 @@ export class UserService {
               detail: 'No user to remove.',
             });
           resolve({
-            code: 204,
-            detail: 'Nothing to show.',
+            code: 200,
+            detail: 'User sucefully removed.',
           });
         }
         reject({
