@@ -11,16 +11,22 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserService } from '../service/user.service';
 
+@ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'Operação realizada com sucesso',
+  })
   async getUser(@Request() request) {
     const { user } = request;
     try {
@@ -31,6 +37,10 @@ export class UserController {
   }
 
   @Put()
+  @ApiResponse({
+    status: 201,
+    description: 'Usuário atualizado com sucesso',
+  })
   async updateUser(@Body() updateUser: UpdateUserDto, @Request() request) {
     const { user } = request;
     try {
@@ -42,6 +52,10 @@ export class UserController {
 
   @HttpCode(204)
   @Delete()
+  @ApiResponse({
+    status: 204,
+    description: 'Usuário removido com sucesso',
+  })
   async deleteUser(@Request() request) {
     const { user } = request;
     try {

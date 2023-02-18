@@ -10,6 +10,7 @@ Este projeto fornece dados para uma aplicação Frontend de mesmo nome desenvolv
 - Listagem de dispositivos disponíveis para o usuário adicionar aos seus dispositivos.
 - Cadastro, exclusão, edição, acionamento e listagem de um ou mais dispositivos vinculados ao usuário (com filtro e/ou paginação).
 - Autenticação por usuário e senha e proteção de rotas por Token JWT.
+- Documentação via Swagger.
 
 ## Stack utilizada
 
@@ -32,6 +33,7 @@ Este projeto fornece dados para uma aplicação Frontend de mesmo nome desenvolv
 - [Class-Validator] - Ferramenta para validação de dados baseada em @Decorators.
 - [Class-Transformer] - Ferramenta para manipulação de dados.
 - [Dotenv-Flow] - Dependência para uso de múltiplas variáveis .env.
+- [Swagger] - Ferramenta para documentar o projeto de forma dinâmica.
 
 [node.js]: https://nodejs.org/en/
 [typescript]: https://www.typescriptlang.org/
@@ -46,6 +48,7 @@ Este projeto fornece dados para uma aplicação Frontend de mesmo nome desenvolv
 [class-validator]: https://github.com/typestack/class-validator
 [class-transformer]: https://github.com/typestack/class-transformer
 [dotenv-flow]: https://www.npmjs.com/package/dotenv-flow
+[swagger]: https://docs.nestjs.com/openapi/introduction
 
 ## Instalação
 
@@ -64,6 +67,8 @@ $ npm run start
 ```
 
 ## Documentação da API
+
+A documentação da API pode ser conferida pelo Swagger em http://localhost:3000/api
 
 ### Endpoints - Usuário
 

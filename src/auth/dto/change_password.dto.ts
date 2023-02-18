@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -14,6 +15,7 @@ export class ChangePasswordDto {
   @IsEmail()
   @MinLength(3)
   @MaxLength(50)
+  @ApiProperty({ name: 'E-mail', example: 'fulano@dasilva.com.br' })
   email: string;
 
   @IsNotEmpty()
@@ -25,6 +27,7 @@ export class ChangePasswordDto {
     minSymbols: 1,
     minUppercase: 1,
   })
+  @ApiProperty({ name: 'Senha', example: 'aB1@duje' })
   password: string;
 
   @IsNotEmpty()
@@ -39,8 +42,10 @@ export class ChangePasswordDto {
     minSymbols: 1,
     minUppercase: 1,
   })
+  @ApiProperty({ name: 'Nova senha', example: 'aB1@duje' })
   newPassword: string;
 
   @Match('newPassword', { message: 'Password do not match' })
+  @ApiProperty({ name: 'Confirmação da nova senha', example: 'aB1@duje' })
   newPassword2: string;
 }

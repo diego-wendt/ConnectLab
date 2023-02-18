@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -9,5 +10,6 @@ import {
 export class IdDeviceDto {
   @IsNotEmpty()
   @IsUUID()
+  @ApiProperty({ name: 'Id do dispositivo do usuário', example: 'UUID do dispositivo' })
   id_device: string;
 }
