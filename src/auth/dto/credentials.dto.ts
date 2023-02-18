@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -12,6 +13,7 @@ export class CredentialsDto {
   @IsEmail()
   @MinLength(3)
   @MaxLength(50)
+  @ApiProperty({ name: 'E-mail', example: 'fulano@dasilva.com.br' })
   email: string;
 
   @IsNotEmpty()
@@ -23,5 +25,6 @@ export class CredentialsDto {
     minSymbols: 1,
     minUppercase: 1,
   })
+  @ApiProperty({ name: 'Senha', example: 'aB1@duje' })
   password: string;
 }
