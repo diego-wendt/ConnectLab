@@ -11,8 +11,9 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
+import { ApiOperations } from 'src/utils/api.operation';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserService } from '../service/user.service';
 
@@ -23,6 +24,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
+  @ApiOperation(ApiOperations.Users.getUser.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Operação realizada com sucesso',
@@ -37,6 +39,7 @@ export class UserController {
   }
 
   @Put()
+  @ApiOperation(ApiOperations.Users.updateUser.ApiOperation)
   @ApiResponse({
     status: 201,
     description: 'Usuário atualizado com sucesso',
@@ -52,6 +55,7 @@ export class UserController {
 
   @HttpCode(204)
   @Delete()
+  @ApiOperation(ApiOperations.Users.deleteUser.ApiOperation)
   @ApiResponse({
     status: 204,
     description: 'Usuário removido com sucesso',

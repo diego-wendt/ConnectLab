@@ -10,8 +10,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
+import { ApiOperations } from 'src/utils/api.operation';
 import { CreateDeviceDto } from '../dto/create-device.dto';
 import { IdDeviceDto } from '../dto/id-device.dto';
 import { PlaceDto } from '../dto/place-dto';
@@ -24,6 +25,7 @@ export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 
   @Get('models')
+  @ApiOperation(ApiOperations.Devices.findAllModels.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Operação realizada com sucesso',
@@ -37,6 +39,7 @@ export class DeviceController {
   }
 
   @Post()
+  @ApiOperation(ApiOperations.Devices.createDevice.ApiOperation)
   @ApiResponse({
     status: 201,
     description: 'Dispositivo cadastrado com sucesso',
@@ -54,6 +57,7 @@ export class DeviceController {
   }
 
   @Get('places')
+  @ApiOperation(ApiOperations.Devices.getPlaces.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Operação realizada com sucesso',
@@ -63,6 +67,7 @@ export class DeviceController {
   }
 
   @Get()
+  @ApiOperation(ApiOperations.Devices.listUserDevices.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Operação realizada com sucesso',
@@ -77,6 +82,7 @@ export class DeviceController {
   }
 
   @Get('device')
+  @ApiOperation(ApiOperations.Devices.findDevice.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Operação realizada com sucesso',
@@ -92,6 +98,7 @@ export class DeviceController {
   }
 
   @Patch()
+  @ApiOperation(ApiOperations.Devices.switchDevice.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Operação realizada com sucesso',
@@ -106,6 +113,7 @@ export class DeviceController {
   }
 
   @Delete()
+  @ApiOperation(ApiOperations.Devices.deleteDevice.ApiOperation)
   @ApiResponse({
     status: 204,
     description: 'Operação realizada com sucesso',

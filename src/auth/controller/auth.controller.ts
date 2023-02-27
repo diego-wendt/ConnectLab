@@ -14,7 +14,8 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { CredentialsDto } from '../dto/credentials.dto';
 import { AuthService } from '../service/auth.service';
 import { Put } from '@nestjs/common/decorators';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperations } from 'src/utils/api.operation';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,6 +27,7 @@ export class AuthController {
     status: 201,
     description: 'Usuário criado com sucesso',
   })
+  @ApiOperation(ApiOperations.Auth.signup.ApiOperation)
   async signup(@Body() createUser: CreateUserDto) {
     try {
       const user = await this.authService.createUser(createUser);
@@ -42,6 +44,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @ApiOperation(ApiOperations.Auth.signin.ApiOperation)
   @ApiResponse({
     status: 200,
     description: 'Login realizado com sucesso',
@@ -57,6 +60,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Put('changepassword')
+  @ApiOperation(ApiOperations.Auth.changepassword.ApiOperation)
   @ApiResponse({
     status: 201,
     description: 'Senha atualizada com sucesso',
