@@ -8,54 +8,60 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
+import { ApiProperties } from 'src/utils/api.properties';
 
 export class CreateAddressDTO {
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @ApiProperty({ name: 'Nome da rua', example: 'Rua dos programadores' })
+  @ApiProperty({
+    name: 'street',
+    description: 'Nome da rua',
+    example: 'Rua dos programadores',
+    maxLength: 50,
+  })
   street: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(1)
   @MaxLength(6)
-  @ApiProperty({ name: 'Número', example: '25' })
+  @ApiProperty(ApiProperties.number)
   number: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @ApiProperty({ name: 'Bairro', example: 'Bairro' })
+  @ApiProperty(ApiProperties.neighborhood)
   neighborhood: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @ApiProperty({ name: 'Cidade', example: 'Florianópolis' })
+  @ApiProperty(ApiProperties.city)
   city: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(2)
   @MaxLength(2)
-  @ApiProperty({ name: 'Sigla do estado', example: 'SC' })
+  @ApiProperty(ApiProperties.state)
   state: string;
 
   @ValidateIf((o) => o.complement != '')
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @ApiProperty({ name: 'Complemento do endereço', example: 'Apto 103' })
+  @ApiProperty(ApiProperties.complement)
   complement: string;
 
   @IsNotEmpty()
   @IsNumberString()
   @MinLength(8)
   @MaxLength(8)
-  @ApiProperty({ name: 'CEP', example: '88010-000' })
+  @ApiProperty(ApiProperties.zipCode)
   zipCode: string;
 }

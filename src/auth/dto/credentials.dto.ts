@@ -7,13 +7,14 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { ApiProperties } from 'src/utils/api.properties';
 
 export class CredentialsDto {
   @IsNotEmpty()
   @IsEmail()
   @MinLength(3)
   @MaxLength(50)
-  @ApiProperty({ name: 'E-mail', example: 'fulano@dasilva.com.br' })
+  @ApiProperty(ApiProperties.email)
   email: string;
 
   @IsNotEmpty()
@@ -25,6 +26,6 @@ export class CredentialsDto {
     minSymbols: 1,
     minUppercase: 1,
   })
-  @ApiProperty({ name: 'Senha', example: 'aB1@duje' })
+  @ApiProperty(ApiProperties.password)
   password: string;
 }

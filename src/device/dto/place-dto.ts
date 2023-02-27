@@ -9,19 +9,30 @@ import {
 import { localDevice } from '../enum/device.local.enum';
 
 export class PlaceDto {
+  @IsOptional()
+  @IsNumberString()
+  @ApiProperty({
+    name: 'page',
+    description: 'Número da página a ser exibida',
+    example: '2',
+  })
+  page: string;
 
   @IsOptional()
   @IsNumberString()
-  @ApiProperty({ name: 'Página a ser exibida', example: '2' })
-  page: string;
-  
-  @IsOptional()
-  @IsNumberString()
-  @ApiProperty({ name: 'Quantidade de itens por página', example: '15' })
+  @ApiProperty({
+    name: 'size',
+    description: 'Quantidade de itens por página',
+    example: '15',
+  })
   size: string;
-  
+
   @IsOptional()
   @IsEnum(localDevice)
-  @ApiProperty({ name: 'Local para filtro dos dispositivos', example: 'Casa' })
+  @ApiProperty({
+    name: 'place',
+    description: 'Local para filtro dos dispositivos',
+    example: 'Casa',
+  })
   place: localDevice;
 }

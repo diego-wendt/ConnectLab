@@ -10,6 +10,10 @@ import {
 export class IdDeviceDto {
   @IsNotEmpty()
   @IsUUID()
-  @ApiProperty({ name: 'Id do dispositivo do usuário', example: 'UUID do dispositivo' })
+  @ApiProperty({
+    name: 'id_device',
+    description: 'Id do dispositivo',
+    example: 'UUID do dispositivo',
+  })
   id_device: string;
 }
